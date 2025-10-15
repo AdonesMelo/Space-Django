@@ -3,7 +3,7 @@ from galeria.models import fotografia
 
 # Função principal da aplicação
 def index(request):
-    fotografias = fotografia.objects.all()
+    fotografias = fotografia.objects.filter(publicada=True)
 
     return render(request, 'galeria/index.html', {'cards': fotografias})
 
