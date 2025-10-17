@@ -1,7 +1,7 @@
 from django.db import models
 from datetime import datetime
 
-class fotografia(models.Model):
+class Fotografia(models.Model):
     OPCAO_CATEGORIA = [
         ('NEBULOSA', 'Nebulosa'),
         ('ESTRELA', 'Estrela'),
