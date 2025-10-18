@@ -26,7 +26,7 @@ class LoginForms(forms.Form):
     )
 
 class CadastroForms(forms.Form):
-    nome_cadatro = forms.CharField(
+    nome_cadastro = forms.CharField(
         label='Nome de cadastro',
         required=True,
         max_length=100,
