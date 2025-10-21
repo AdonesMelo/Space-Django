@@ -29,7 +29,7 @@ def login(request):
     return render(request, 'usuarios/login.html', {'form': form})   
 
 def cadastro(request):
-    form = CadastroForms
+    form = CadastroForms()
 
     if request.method == 'POST':
         form = CadastroForms(request.POST)
