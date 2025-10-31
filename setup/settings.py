@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apps.galeria.apps.GaleriaConfig',
     'apps.usuarios.apps.UsuariosConfig',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -116,9 +117,39 @@ USE_I18N = True
 
 USE_TZ = True
 
+# --- Configurações do AWS S3 ---
+
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
+
+# Configurações para que o S3 não reclame de ACLs
+# (Necessário para buckets com "Block all public access" ATIVADO)
+AWS_DEFAULT_ACL = None
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400', # Cache de 1 dia para os arquivos
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
+
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "location": "media", # Salva os arquivos dentro de uma pasta /media/ no bucket
+            "file_overwrite": False, # Impede sobrescrever arquivos com mesmo nome
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "location": "static", # Salva os arquivos dentro de uma pasta /static/ no bucket
+        },
+    },
+}
 
 STATIC_URL = 'static/'
 
@@ -134,7 +165,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-MEDIA_URL = '/media/'
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+
+STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
